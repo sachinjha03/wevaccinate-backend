@@ -4,7 +4,14 @@ const cors = require('cors')
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
-app.use(cors())
+// app.use(cors())
+app.use(
+  cors({
+    origin: ["https://we-vaccinate.netlify.app/"], // Replace with your actual frontend domains
+    credentials: true, // Allow cookies & authentication headers
+  })
+);
+
 
 
 require("./db/connection")
