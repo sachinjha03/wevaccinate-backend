@@ -9,7 +9,7 @@ app.use(express.urlencoded({extended:true}))
 
 app.use(
   cors({
-    origin: "http://localhost:5174", // Replace with your actual frontend domains
+    origin: ["http://localhost:5174" , "http://192.168.1.15:5174"], // Replace with your actual frontend domains
     credentials: true, // Allow cookies & authentication headers
   })
 );
