@@ -7,7 +7,7 @@ app.use(express.urlencoded({extended:true}))
 // app.use(cors())
 app.use(
   cors({
-    origin: ["https://we-vaccinate.netlify.app/"], // Replace with your actual frontend domains
+    origin: ["https://we-vaccinate.netlify.app/" , "http://localhost:5173" , "http://localhost:5174"], // Replace with your actual frontend domains
     credentials: true, // Allow cookies & authentication headers
   })
 );
