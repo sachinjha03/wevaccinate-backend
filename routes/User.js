@@ -43,23 +43,27 @@ router.get("/read-all-users" , async(req,res) => {
 })
 
 
-router.post("/login" , async(req,res) => {
-    try{
-        const email = req.body.email;
-        const password = req.body.password;
-        const myUser = await users.findOne({email:email});
-        if(!myUser){
-            res.status(404).json({success:false , reason:"User Doesn't Exist"})       
+router.post("/login", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const myUser = await users.findOne({ email: email });
+
+        if (!myUser) {
+            return res.status(404).json({ success: false, reason: "User Doesn't Exist" }); // ✅ Added return
         }
-        if(myUser.password !== password){
-            return res.status(400).json({ success: false, reason: "Incorrect Password" });
+
+        if (myUser.password !== password) {
+            return res.status(400).json({ success: false, reason: "Incorrect Password" }); // ✅ Added return
         }
-        const token = jwt.sign({userID:myUser.userID} , secretKey);
-        return res.status(200).json({ success: true, data: myUser , token:token});
-    }catch(err){
-        res.status(400).json({success:false , reason:err})
+
+        const token = jwt.sign({ userID: myUser.userID }, secretKey);
+        return res.status(200).json({ success: true, data: myUser, token: token }); // ✅ Correct return statement
+
+    } catch (err) {
+        return res.status(500).json({ success: false, reason: "Internal Server Error" }); // ✅ Return added
     }
-})
+});
+
 
 router.get("/read-my-details" , async(req,res) => {
     try{
