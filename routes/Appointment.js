@@ -22,7 +22,7 @@ router.post("/book-appointment" , async(req,res) => {
             address : req.body.address,
             vaccineName : req.body.vaccineName,
             file : req.body.file,
-            userId : userID
+            userId : userID,
         })
         const response = await newAppointment.save()
         res.status(200).json({success:true , data : response})

@@ -3,6 +3,7 @@ const router = express.Router()
 const users = require("../models/users")
 const jwt = require('jsonwebtoken')
 const secretKey = "SACHINKUMARJHA12345"
+const bcryptjs = require('bcryptjs')
 
 router.post("/create-user" , async(req,res) => {
     try{
@@ -14,20 +15,21 @@ router.post("/create-user" , async(req,res) => {
             }
             return userId;
         };
-        const confirmPassword = req.body.confirmPassword;
+        // const confirmPassword = req.body.confirmPassword;
+        const hashedPassword = await bcryptjs.hash(req.body.password , 10)
         const newUser = new users({
             userID : generateUserId(),
             name : req.body.name,
             email : req.body.email,
-            password : req.body.password,
+            password : hashedPassword,
             contact : req.body.contact,
         })
-        if(confirmPassword === req.body.password){
+        // if(confirmPassword === req.body.password){
             const response = await newUser.save();
             res.status(200).json({success:true , data:response});
-        }else{
-            res.status(400).json({success:false , reason : "Password Mismatched!"})
-        }
+        // }else{
+        //     res.status(400).json({success:false , reason : "Password Mismatched!"})
+        // }
     }catch(err){
         res.status(400).json({success:false , reason:err})
     }
@@ -43,6 +45,24 @@ router.get("/read-all-users" , async(req,res) => {
 })
 
 
+// router.post("/login" , async(req,res) => {
+//     try{
+//         const email = req.body.email;
+//         const password = req.body.password;
+//         const myUser = await users.findOne({email:email});
+//         if(!myUser){
+//             res.status(404).json({success:false , reason:"User Doesn't Exist"})       
+//         }
+//         if(myUser.password !== password){
+//             return res.status(400).json({ success: false, reason: "Incorrect Password" });
+//         }
+//         const token = jwt.sign({userID:myUser.userID} , secretKey);
+//         return res.status(200).json({ success: true, data: myUser , token:token});
+//     }catch(err){
+//         res.status(400).json({success:false , reason:err})
+//     }
+// })
+
 router.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -51,8 +71,8 @@ router.post("/login", async (req, res) => {
         if (!myUser) {
             return res.status(404).json({ success: false, reason: "User Doesn't Exist" }); // ✅ Added return
         }
-
-        if (myUser.password !== password) {
+        const checkPassword = await bcryptjs.compare(password , myUser.password)
+        if (!checkPassword) {
             return res.status(400).json({ success: false, reason: "Incorrect Password" }); // ✅ Added return
         }
 
